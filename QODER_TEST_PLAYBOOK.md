@@ -1,0 +1,719 @@
+# QODER TEST PLAYBOOK — COMS3011A
+
+Use this as a **static open-book note** during the test.  
+It is not an AI tool. Copy only the prompt you need into Qoder.
+
+---
+
+# 0. QUICK RULES
+
+## Qoder modes
+- **Ask + Efficient** → understand brief, plan, debug, audit.
+- **Agent + Auto** → implement normal features.
+- **Agent + Performance** → only if Auto genuinely struggles.
+- **Ultimate / Experts / Quest** → avoid unless there is a very good reason.
+
+## Test rhythm
+1. Read brief yourself.
+2. Ask Qoder to analyse it.
+3. Make `TEST_SPEC.md`.
+4. Build minimum working core.
+5. Test it.
+6. Commit + push.
+7. Add one coherent feature at a time.
+8. Test after each feature.
+9. Commit + push at checkpoints.
+10. Stop adding features ~25–30 min before the end.
+11. Final audit.
+12. Clean-clone test.
+13. Final push.
+
+## Credit-saving rules
+- Do not repeatedly attach the PDF.
+- Attach/read the full brief **once**, then work from `TEST_SPEC.md`.
+- Ask specific questions.
+- Do not say only “fix it”.
+- Do not use Performance/Ultimate unless necessary.
+- Do not generate Repo Wiki / Knowledge Cards during the test unless genuinely needed.
+- Start a new Qoder chat if the current chat becomes huge or changes topic.
+
+---
+
+# 1. START OF TEST — READ THE BRIEF
+
+## MODE
+**Ask + Efficient**
+
+## YOU FIRST
+Before prompting Qoder, spend about 2–3 minutes scanning the brief for:
+- what must be built
+- required stack
+- mandatory features
+- pass/fail or zero-risk conditions
+- persistence requirements
+- prohibited implementation choices
+- README/run requirements
+- tests
+- submission requirements
+- mark allocation
+
+Then attach the brief/rubric to Qoder **once**.
+
+## PROMPT — BRIEF ANALYSIS
+
+```text
+READ ONLY. Do not change any files.
+
+Read the ENTIRE attached test brief and marking rubric.
+
+I have 2.5 hours and need to maximise marks.
+
+Give me:
+
+1. Every mandatory requirement.
+2. Any pass/fail, zero-risk, or major-mark-loss conditions.
+3. Every implementation constraint or edge case I must not violate.
+4. The marking priorities, highest-value items first.
+5. The simplest architecture that satisfies the brief.
+6. A realistic implementation order for 2.5 hours.
+7. Which requirements naturally belong in the same implementation step.
+8. For each requirement, an observable acceptance check that proves it works.
+9. A final submission checklist.
+
+Do not invent requirements.
+Do not remove awkward constraints.
+Do not recommend optional work that earns no marks.
+Prefer a simple, reliable implementation over a clever one.
+Keep the response concise enough to use as a working specification.
+```
+
+---
+
+# 2. CREATE `TEST_SPEC.md`
+
+Still use **Ask + Efficient**.
+
+After Qoder analyses the brief, ask:
+
+```text
+Using only the attached test brief and rubric, rewrite the requirements as a compact Markdown working specification.
+
+Use exactly these headings:
+
+# MUST HAVE
+# CONSTRAINTS
+# MARKING PRIORITIES
+# ACCEPTANCE CHECKS
+# IMPLEMENTATION ORDER
+# FINAL SUBMISSION CHECK
+
+Preserve every important requirement and edge case.
+Do not invent anything.
+Keep it concise.
+
+Output Markdown only.
+```
+
+Create a file in the test repo called:
+
+`TEST_SPEC.md`
+
+Paste Qoder’s output into it.
+
+**IMPORTANT:** Spend 2–3 minutes comparing `TEST_SPEC.md` against the actual brief.  
+If Qoder missed or distorted anything, fix the file yourself.
+
+For most later prompts, use `@TEST_SPEC.md` instead of repeatedly attaching the full PDF.
+
+---
+
+# 3. REPO SETUP
+
+If the lecturer gives you a starter repo, use that.
+
+If you must create your own Gitea repo:
+
+1. Create repo on Gitea.
+2. Prefer the **HTTPS** clone URL.
+3. Clone it onto the lab computer.
+4. Open that exact folder in Qoder.
+
+Typical commands:
+
+```bash
+git clone https://sdp.ms.wits.ac.za/<username>/<repo-name>.git
+cd <repo-name>
+git status
+```
+
+If working from supplied local files instead of a cloned repo, make sure the remote is set correctly before spending lots of time coding.
+
+Check:
+
+```bash
+git remote -v
+```
+
+---
+
+# 4. FIRST REAL BUILD — MINIMUM WORKING CORE
+
+## MODE
+**Agent + Auto**
+
+## PROMPT
+
+```text
+Read @TEST_SPEC.md completely before changing anything.
+
+Implement the MINIMUM WORKING CORE of the application.
+
+GOAL:
+Get the application into a runnable, testable state as quickly as possible while satisfying the essential core requirements.
+
+FOR THIS PASS:
+- create/use the required project structure
+- implement the required core data model
+- implement the minimum primary workflow
+- implement persistence if required
+- make the application start successfully
+- include only core behaviour needed for the first working checkpoint
+
+CONSTRAINTS:
+- follow TEST_SPEC.md exactly
+- preserve every explicit constraint in TEST_SPEC.md
+- do not implement optional/nice-to-have features yet
+- do not add unnecessary dependencies
+- do not refactor unrelated working code
+- prefer simple, reliable implementation over clever architecture
+
+WHEN FINISHED:
+1. run the relevant install/build/start commands
+2. run any existing tests
+3. report exactly what now works
+4. report which TEST_SPEC.md requirements remain
+5. list the files changed
+
+Stop after the minimum working core is functional.
+```
+
+## AFTER IT FINISHES
+Do not immediately move on.
+
+Check:
+- number of files changed
+- whether the changes make sense
+- app starts
+- core behaviour works
+- tests/build pass if available
+
+Then checkpoint:
+
+```bash
+git status
+git add .
+git commit -m "feat: implement minimum working core"
+git push
+```
+
+---
+
+# 5. IMPLEMENT EACH NEXT FEATURE
+
+## MODE
+Normally **Agent + Auto**
+
+Use one coherent feature at a time — not one line at a time, and not the whole remaining application at once.
+
+## PROMPT TEMPLATE
+
+```text
+Read @TEST_SPEC.md.
+
+Implement the [FEATURE NAME] requirement.
+
+ACCEPTANCE CRITERIA:
+[paste the exact requirement / Done When / rubric wording here]
+
+CONSTRAINTS:
+- preserve all currently working behaviour
+- follow TEST_SPEC.md exactly
+- do not change unrelated features
+- do not add unnecessary dependencies
+- do not weaken or bypass existing constraints
+
+WHEN FINISHED:
+1. test this feature
+2. run the existing relevant tests
+3. tell me what files changed
+4. tell me exactly how I can manually verify it
+5. report any remaining concern
+
+Stop when this requirement is complete.
+```
+
+## GOOD FEATURE SIZE
+Good:
+- “Implement archiving exactly as specified.”
+- “Implement sorting by all required fields.”
+- “Add the required REST API and its tests.”
+- “Add the required Docker setup.”
+
+Too small:
+- “Add one button.”
+- “Change one variable.”
+
+Too large:
+- “Finish the entire rest of the exam.”
+
+## CHECKPOINT AFTER A WORKING FEATURE
+
+```bash
+git status
+git add .
+git commit -m "feat: <short description>"
+git push
+```
+
+---
+
+# 6. DEBUGGING / ERROR PROMPT
+
+## MODE
+Start with **Ask + Efficient** if you want diagnosis first.
+
+If the fix is obvious and contained, use **Agent + Auto**.
+
+## PROMPT
+
+```text
+This exact behaviour is failing.
+
+WHAT I DID:
+[steps / command]
+
+EXPECTED:
+[what should happen]
+
+ACTUAL:
+[what happened]
+
+EXACT ERROR / OUTPUT:
+[paste the full error here]
+
+Diagnose the root cause before making changes.
+
+Then make the SMALLEST fix necessary.
+
+CONSTRAINTS:
+- do not redesign working parts of the application
+- do not add a dependency unless genuinely necessary
+- preserve TEST_SPEC.md requirements
+- do not suppress the error without fixing the cause
+
+AFTER THE FIX:
+1. rerun the failing command/check
+2. run the relevant existing tests
+3. explain the root cause in 2–3 sentences
+4. list the files changed
+```
+
+## IMPORTANT
+Do not prompt:
+
+`fix it`
+
+Instead provide:
+- exact command
+- exact error
+- expected result
+- actual result
+
+---
+
+# 7. IF QODER MAKES A BAD CHANGE
+
+Do not stack another vague prompt on top.
+
+Use:
+
+```text
+The last change is not acceptable.
+
+Specific problem:
+[describe exactly what is wrong]
+
+Required behaviour:
+[paste exact requirement]
+
+Correct only this problem.
+Do not redesign the feature.
+Do not modify unrelated working code.
+
+After correcting it, rerun the relevant check/tests and show me what changed.
+```
+
+If the change is badly off-track, use Git to inspect/revert before continuing.
+
+Useful:
+
+```bash
+git status
+git diff
+git log --oneline -5
+```
+
+---
+
+# 8. MID-TEST RUBRIC CHECK
+
+Use this roughly halfway through, especially if you are unsure what to do next.
+
+## MODE
+**Ask + Efficient**
+
+```text
+READ ONLY. Do not modify files.
+
+Read @TEST_SPEC.md and inspect the current repository.
+
+Create a short table:
+
+Requirement | PASS / PARTIAL / FAIL | Evidence | Smallest next action
+
+Prioritise:
+1. pass/fail blockers
+2. highest-mark requirements
+3. quick wins
+4. optional work last
+
+Do not suggest refactors or polish unless they directly earn marks.
+```
+
+---
+
+# 9. README / RUN INSTRUCTIONS
+
+Do not leave this until the last 2 minutes.
+
+Your README should normally make a clean clone runnable without guessing.
+
+Ask Qoder:
+
+## MODE
+**Ask + Efficient** first, or **Agent + Auto** if you want it to edit.
+
+```text
+Read @TEST_SPEC.md and inspect the current project.
+
+Check whether README.md gives a marker everything needed to run this project from a clean clone.
+
+It must clearly state:
+- required runtime/version
+- dependency installation command
+- environment setup if required
+- exact start command
+- exact test command
+- any required Docker command if applicable
+
+Do not add unnecessary explanation.
+Do not claim a command works unless it matches the repository.
+```
+
+---
+
+# 10. FINAL FEATURE FREEZE
+
+About **25–30 minutes before the deadline**:
+
+STOP adding ambitious new features.
+
+Switch mindset from:
+
+`developer`
+
+to:
+
+`marker`
+
+From this point:
+- fix blockers
+- verify marks
+- verify README
+- verify tests
+- verify clone
+- verify push
+
+---
+
+# 11. FINAL AUDIT PROMPT
+
+## MODE
+**Ask + Efficient**
+
+## PROMPT
+
+```text
+READ ONLY. Do not modify anything.
+
+Audit this repository against @TEST_SPEC.md and the marking requirements line by line.
+
+For every requirement return:
+
+PASS / PARTIAL / FAIL
+Evidence from the current repository
+The smallest action required if it is not PASS
+
+Also specifically check:
+- application can be installed and started
+- required functionality is reachable
+- persistence works if required
+- tests run from the documented command
+- README instructions match the actual project
+- required files exist
+- environment variables are documented
+- no required edge case is missing
+- no obvious requirement was implemented in a forbidden way
+- no secrets/tokens are committed
+- git working tree has no forgotten important changes
+
+Do not suggest optional improvements.
+Only identify things that could lose marks.
+Order problems from most dangerous to least dangerous.
+```
+
+Fix only genuine mark-losers.
+
+---
+
+# 12. CLEAN-CLONE CHECK
+
+This is one of the most important final checks.
+
+From a directory OUTSIDE your working repo:
+
+```bash
+cd ..
+git clone <YOUR-SUBMISSION-HTTPS-URL> final-check
+cd final-check
+```
+
+Now follow **only the README**.
+
+Typical checks may include:
+
+```bash
+npm install
+npm test
+npm run dev
+```
+
+or whatever the brief requires.
+
+If Docker is used:
+
+```bash
+docker compose config
+docker compose build
+docker compose up -d
+docker compose ps
+```
+
+Pretend you are the marker.
+
+If something is required but not in README, fix the README.
+
+---
+
+# 13. FINAL GIT CHECK
+
+Before the deadline:
+
+```bash
+git status
+git remote -v
+git log --oneline -5
+git push
+```
+
+Make sure:
+- correct repo
+- correct branch
+- no important uncommitted work
+- latest commit is pushed
+- submission URL is the HTTPS URL requested by the course
+
+---
+
+# 14. GITEA / PAT EMERGENCY
+
+A PAT is used as the password for HTTPS Git authentication.
+
+If push fails:
+
+```bash
+git push
+git remote -v
+```
+
+If credentials are needed:
+
+```bash
+git config --global credential.helper store
+git push
+```
+
+Then:
+- Username = Gitea username
+- Password = PAT
+
+Never put the PAT:
+- in source code
+- in README
+- in `TEST_SPEC.md`
+- in Qoder
+- in a committed `.env`
+- inside a URL that gets committed
+
+If an old/wrong credential is cached on Windows, it may be stored in:
+
+```text
+C:\Users\<username>\.git-credentials
+```
+
+If you expose a PAT, revoke it and create a new one.
+
+---
+
+# 15. DOCKER QUICK COMMANDS
+
+Only use Docker if required/useful for the brief.
+
+```bash
+docker compose config
+docker compose build
+docker compose up -d
+docker compose ps
+docker compose logs
+docker compose restart
+docker compose down
+```
+
+If you need to destroy volumes too:
+
+```bash
+docker compose down -v
+```
+
+Remember:
+- `Dockerfile` = recipe for one image
+- image = packaged app
+- container = running image
+- `compose.yml` = defines multiple services together
+- volume = persistent data
+- inside Compose, another service is reached by its **service name**, not `localhost`
+
+---
+
+# 16. QODER CONTEXT RULES
+
+Use the full PDF once.
+
+After that prefer:
+
+```text
+@TEST_SPEC.md
+```
+
+When debugging a specific area, narrow further if useful:
+
+```text
+@TEST_SPEC.md @package.json
+@TEST_SPEC.md @compose.yml
+@TEST_SPEC.md @lib/db.ts
+```
+
+Do not repeatedly attach the entire repository or PDF unless necessary.
+
+If a chat becomes huge or changes topic, start a fresh Qoder chat and reference `@TEST_SPEC.md`.
+
+---
+
+# 17. QUEST?
+
+For this test, default to:
+
+**Ask → Agent → test → commit**
+
+Quest is optional.
+
+Use Quest only if:
+- core app already works
+- you have a clearly isolated larger feature
+- you understand exactly what you want it to deliver
+- there is enough time to review its plan and result
+
+Do NOT start the test by saying:
+
+`Here is the PDF. Build the whole exam in Quest.`
+
+---
+
+# 18. 2.5-HOUR TIMELINE
+
+## 0–10 min
+- read brief
+- Ask + Efficient analysis
+- create/verify `TEST_SPEC.md`
+- repo ready
+
+## 10–40 min
+- Agent + Auto
+- minimum working core
+- run/check
+- first commit + push
+
+## 40–110 min
+- highest-value features
+- one coherent feature at a time
+- test after each
+- commit/push checkpoints
+
+## 110–125 min
+- tests
+- README
+- missing rubric items
+- quick audit
+
+## 125–145 min
+- feature freeze
+- final audit
+- clean-clone test
+- fix blockers only
+
+## 145–150 min
+- `git status`
+- `git log`
+- `git push`
+- verify submission URL
+- stop making risky changes
+
+---
+
+# 19. ABSOLUTE TEST MANTRAS
+
+**Working > fancy.**
+
+**Rubric > interesting idea.**
+
+**One coherent feature → check it → commit it.**
+
+**Exact errors beat “fix it”.**
+
+**Do not burn credits asking Qoder to rediscover context it already has.**
+
+**Do not let the last 10 minutes become feature-development time.**
+
+**A change that is not pushed is not safely submitted.**
+
+**Clean clone + README = marker reality.**
