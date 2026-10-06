@@ -75,8 +75,9 @@ Attach the test brief / rubric **once**.
 READ ONLY. Do not change any files.
 
 Read the ENTIRE attached test brief and marking rubric.
+Treat the rubric/mark allocation as authoritative for prioritisation. Do not assume every requirement is worth the same marks.
 
-I need you to convert it into a scoring-oriented implementation specification for a 2.5-hour test.
+I need you to convert it into a scoring-oriented implementation specification for a 2-hour test.
 
 For EVERY requirement, extract:
 
